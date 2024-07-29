@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Posts</title>
+</head>
+<body>
+    <h1>Posts</h1>
+    {% if current_user.is_authenticated %}
+        <p>Welcome, {{ current_user.name }}!</p> <!-- 사용자 실명 표시 -->
+        <a href="{{ url_for('routes.logout') }}">Logout</a>
+        {% if current_user.id == 1 %}
+            <a href="{{ url_for('routes.create_post') }}">Create Post</a>
+        {% endif %}
+    {% else %}
+        <a href="{{ url_for('routes.login') }}">Login</a>
+        <a href="{{ url_for('routes.register') }}">Register</a>
+    {% endif %}
+    <ul>
+        {% for post in posts %}
+        <li>
+            <h2>{{ post[1] }}</h2>
+            <p>{{ post[2] }}</p>
+            {% if current_user.is_authenticated and current_user.id == 1 %}
+                <a href="{{ url_for('routes.edit_post', post_id=post[0]) }}">Edit</a>
+                <a href="{{ url_for('routes.delete_post', post_id=post[0]) }}">Delete</a>
+            {% endif %}
+        </li>
+        {% endfor %}
+    </ul>
+</body>
+</html>
