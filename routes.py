@@ -1,7 +1,7 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash, current_app
-from flask_login import login_user, logout_user, login_required, current_user  # 여기에 current_user 추가
+from flask_login import login_user, logout_user, login_required, current_user
 from werkzeug.security import check_password_hash, generate_password_hash
-from utils import id_one_required, get_user_by_username, get_user_by_id, create_user
+from utils import id_one_required, get_user_by_username, get_user_by_id, create_user, save_file
 from extensions import login_manager
 
 bp = Blueprint('routes', __name__)
@@ -52,7 +52,7 @@ def index():
     try:
         db = current_app.get_db()
         with db.cursor() as cursor:
-            cursor.execute("SELECT id, title, content FROM posts")
+            cursor.execute("SELECT id, title, content, image FROM posts")
             posts = cursor.fetchall()
     except Exception as e:
         print(f"Database connection failed: {e}")
@@ -66,9 +66,11 @@ def create_post():
     if request.method == 'POST':
         title = request.form['title']
         content = request.form['content']
+        file = request.files['image']
+        filename = save_file(file)
         db = current_app.get_db()
         with db.cursor() as cursor:
-            cursor.execute("INSERT INTO posts (title, content) VALUES (%s, %s)", (title, content))
+            cursor.execute("INSERT INTO posts (title, content, image) VALUES (%s, %s, %s)", (title, content, filename))
             db.commit()
         return redirect(url_for('routes.index'))
     return render_template('create_post.html')
@@ -81,12 +83,14 @@ def edit_post(post_id):
     if request.method == 'POST':
         title = request.form['title']
         content = request.form['content']
+        file = request.files['image']
+        filename = save_file(file)
         with db.cursor() as cursor:
-            cursor.execute("UPDATE posts SET title = %s, content = %s WHERE id = %s", (title, content, post_id))
+            cursor.execute("UPDATE posts SET title = %s, content = %s, image = %s WHERE id = %s", (title, content, filename, post_id))
             db.commit()
         return redirect(url_for('routes.index'))
     with db.cursor() as cursor:
-        cursor.execute("SELECT id, title, content FROM posts WHERE id = %s", (post_id,))
+        cursor.execute("SELECT id, title, content, image FROM posts WHERE id = %s", (post_id,))
         post = cursor.fetchone()
     return render_template('edit_post.html', post=post)
 

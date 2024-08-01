@@ -3,6 +3,14 @@ from extensions import login_manager
 import pymysql
 from config import Config
 from routes import bp as routes_bp
+from dotenv import load_dotenv
+import os
+
+# load .env
+load_dotenv()
+server_host = os.environ.get('HOST')
+server_port = os.environ.get('PORT')
+
 
 def create_app():
     app = Flask(__name__)
@@ -35,4 +43,4 @@ def create_app():
 app = create_app()
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(host=server_host, port=server_port, debug=True)

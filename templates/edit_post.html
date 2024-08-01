@@ -6,11 +6,16 @@
 </head>
 <body>
     <h1>Edit Post</h1>
-    <form action="{{ url_for('routes.edit_post', post_id=post['id']) }}" method="post">
+    <form action="{{ url_for('routes.edit_post', post_id=post['id']) }}" method="post" enctype="multipart/form-data">
         <label for="title">Title:</label>
         <input type="text" id="title" name="title" value="{{ post['title'] }}" required>
         <label for="content">Content:</label>
         <textarea id="content" name="content" required>{{ post['content'] }}</textarea>
+        <label for="image">Image:</label>
+        <input type="file" id="image" name="image">
+        {% if post['image'] %}
+            <img src="{{ url_for('static', filename='uploads/' ~ post['image']) }}" alt="Post Image" style="max-width: 200px;">
+        {% endif %}
         <button type="submit">Save</button>
     </form>
 </body>
