@@ -15,6 +15,7 @@ flask
 ## 환경 구축
 ```bash
 $ pip install -r requirements.txt
+$ pip install pymysql
 ```
 
 ## mysql DB 구축
