@@ -16,6 +16,17 @@ $ pip install -r requirements.txt
 $ pip install pymysql
 ```
 
+## .env 생성
+```bash
+$ mkdir .env
+
+# .env
+mysql_id='mysql사용자이름'
+mysql_pw='mysql사용자비밀번호'
+HOST='사용할 host_ip'
+PORT='사용할 port'
+```
+
 ## mysql DB 구축
 ```sql
 CREATE DATABASE login;
@@ -38,6 +49,9 @@ CREATE TABLE posts (
     id INT AUTO_INCREMENT PRIMARY KEY,
     title VARCHAR(255) NOT NULL,
     content TEXT NOT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    image VARCHAR(255)
 );
+
+
 ```
