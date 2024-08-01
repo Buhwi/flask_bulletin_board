@@ -7,8 +7,6 @@ flask를 활용하여 게시판을 구현
 ```
 ## 개발환경
 ```bash
-python
-html
 flask
 ```
 
