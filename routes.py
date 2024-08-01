@@ -1,9 +1,8 @@
-from flask import Blueprint, render_template, request, redirect, url_for, flash
-from flask_login import login_user, logout_user, login_required, current_user
+from flask import Blueprint, render_template, request, redirect, url_for, flash, current_app
+from flask_login import login_user, logout_user, login_required, current_user  # 여기에 current_user 추가
 from werkzeug.security import check_password_hash, generate_password_hash
-from models import get_user_by_username, get_user_by_id, create_user
-from utils import id_one_required
-from extensions import mysql, login_manager
+from utils import id_one_required, get_user_by_username, get_user_by_id, create_user
+from extensions import login_manager
 
 bp = Blueprint('routes', __name__)
 
@@ -50,10 +49,14 @@ def logout():
 
 @bp.route('/')
 def index():
-    cursor = mysql.connection.cursor()
-    cursor.execute("SELECT id, title, content FROM posts")
-    posts = cursor.fetchall()
-    cursor.close()
+    try:
+        db = current_app.get_db()
+        with db.cursor() as cursor:
+            cursor.execute("SELECT id, title, content FROM posts")
+            posts = cursor.fetchall()
+    except Exception as e:
+        print(f"Database connection failed: {e}")
+        return "Database connection failed", 500
     return render_template('index.html', posts=posts)
 
 @bp.route('/post/create', methods=['GET', 'POST'])
@@ -63,10 +66,10 @@ def create_post():
     if request.method == 'POST':
         title = request.form['title']
         content = request.form['content']
-        cursor = mysql.connection.cursor()
-        cursor.execute("INSERT INTO posts (title, content) VALUES (%s, %s)", (title, content))
-        mysql.connection.commit()
-        cursor.close()
+        db = current_app.get_db()
+        with db.cursor() as cursor:
+            cursor.execute("INSERT INTO posts (title, content) VALUES (%s, %s)", (title, content))
+            db.commit()
         return redirect(url_for('routes.index'))
     return render_template('create_post.html')
 
@@ -74,25 +77,25 @@ def create_post():
 @login_required
 @id_one_required
 def edit_post(post_id):
-    cursor = mysql.connection.cursor()
+    db = current_app.get_db()
     if request.method == 'POST':
         title = request.form['title']
         content = request.form['content']
-        cursor.execute("UPDATE posts SET title = %s, content = %s WHERE id = %s", (title, content, post_id))
-        mysql.connection.commit()
-        cursor.close()
+        with db.cursor() as cursor:
+            cursor.execute("UPDATE posts SET title = %s, content = %s WHERE id = %s", (title, content, post_id))
+            db.commit()
         return redirect(url_for('routes.index'))
-    cursor.execute("SELECT id, title, content FROM posts WHERE id = %s", (post_id,))
-    post = cursor.fetchone()
-    cursor.close()
+    with db.cursor() as cursor:
+        cursor.execute("SELECT id, title, content FROM posts WHERE id = %s", (post_id,))
+        post = cursor.fetchone()
     return render_template('edit_post.html', post=post)
 
 @bp.route('/post/delete/<int:post_id>')
 @login_required
 @id_one_required
 def delete_post(post_id):
-    cursor = mysql.connection.cursor()
-    cursor.execute("DELETE FROM posts WHERE id = %s", (post_id,))
-    mysql.connection.commit()
-    cursor.close()
+    db = current_app.get_db()
+    with db.cursor() as cursor:
+        cursor.execute("DELETE FROM posts WHERE id = %s", (post_id,))
+        db.commit()
     return redirect(url_for('routes.index'))

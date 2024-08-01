@@ -7,7 +7,7 @@
 <body>
     <h1>Posts</h1>
     {% if current_user.is_authenticated %}
-        <p>Welcome, {{ current_user.name }}!</p> <!-- 사용자 실명 표시 -->
+        <p>Welcome, {{ current_user.name }}!</p>
         <a href="{{ url_for('routes.logout') }}">Logout</a>
         {% if current_user.id == 1 %}
             <a href="{{ url_for('routes.create_post') }}">Create Post</a>
@@ -19,11 +19,11 @@
     <ul>
         {% for post in posts %}
         <li>
-            <h2>{{ post[1] }}</h2>
-            <p>{{ post[2] }}</p>
+            <h2>{{ post['title'] }}</h2>
+            <p>{{ post['content'] }}</p>
             {% if current_user.is_authenticated and current_user.id == 1 %}
-                <a href="{{ url_for('routes.edit_post', post_id=post[0]) }}">Edit</a>
-                <a href="{{ url_for('routes.delete_post', post_id=post[0]) }}">Delete</a>
+                <a href="{{ url_for('routes.edit_post', post_id=post['id']) }}">Edit</a>
+                <a href="{{ url_for('routes.delete_post', post_id=post['id']) }}">Delete</a>
             {% endif %}
         </li>
         {% endfor %}
