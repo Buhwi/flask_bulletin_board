@@ -16,6 +16,11 @@ $ pip install -r requirements.txt
 $ pip install pymysql
 ```
 
+## 파일 저장소 구축
+```bash
+$ mkdir uploads
+```
+
 ## .env 생성
 ```bash
 $ mkdir .env
