@@ -13,4 +13,4 @@ class Config:
     MYSQL_PASSWORD = pw
     MYSQL_DB = 'login'
     UPLOAD_FOLDER = 'uploads'
-    ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
+    ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'pdf', 'doc', 'docx', 'txt'}

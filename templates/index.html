@@ -19,15 +19,7 @@
     <ul>
         {% for post in posts %}
         <li>
-            <h2>{{ post['title'] }}</h2>
-            <p>{{ post['content'] }}</p>
-            {% if post['image'] %}
-                <img src="{{ url_for('static', filename='uploads/' ~ post['image']) }}" alt="Post Image" style="max-width: 200px;">
-            {% endif %}
-            {% if current_user.is_authenticated and current_user.id == 1 %}
-                <a href="{{ url_for('routes.edit_post', post_id=post['id']) }}">Edit</a>
-                <a href="{{ url_for('routes.delete_post', post_id=post['id']) }}">Delete</a>
-            {% endif %}
+            <a href="{{ url_for('routes.view_post', post_id=post['id']) }}">{{ post['title'] }}</a>
         </li>
         {% endfor %}
     </ul>

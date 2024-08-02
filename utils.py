@@ -59,6 +59,15 @@ def save_file(file):
     if file and allowed_file(file.filename):
         filename = secure_filename(file.filename)
         file_path = os.path.join(current_app.config['UPLOAD_FOLDER'], filename)
-        file.save(file_path)
-        return filename
+        
+        # Ensure the upload folder exists
+        os.makedirs(current_app.config['UPLOAD_FOLDER'], exist_ok=True)
+        
+        try:
+            file.save(file_path)
+            print(f"File saved to {file_path}")
+            return filename
+        except Exception as e:
+            print(f"Error saving file: {e}")
+            return None
     return None

@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ post['title'] }}</title>
+</head>
+<body>
+    <h1>{{ post['title'] }}</h1>
+    <p>{{ post['content'] }}</p>
+    {% if post['image'] %}
+        <img src="{{ url_for('routes.uploaded_file', filename=post['image']) }}" alt="Post Image" style="max-width: 200px;">
+    {% endif %}
+    {% if post['document'] %}
+        <a href="{{ url_for('routes.uploaded_file', filename=post['document']) }}">Download Document</a>
+    {% endif %}
+    <a href="{{ url_for('routes.index') }}">Back to Posts</a>
+    {% if current_user.is_authenticated and current_user.id == 1 %}
+        <a href="{{ url_for('routes.edit_post', post_id=post['id']) }}">Edit</a>
+        <a href="{{ url_for('routes.delete_post', post_id=post['id']) }}">Delete</a>
+    {% endif %}
+</body>
+</html>
